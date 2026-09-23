@@ -3,6 +3,7 @@ package com.example.spring_conc.service;
 import com.example.spring_conc.dto.requests.ProductRequest;
 import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
+import com.example.spring_conc.exception.ProductNotFoundException;
 import com.example.spring_conc.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +12,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,20 +62,25 @@ class ProductServiceTest {
                 .save(any(Product.class));
     }
 
-    /*
     @Test
-    void getAllProducts() {
+    public void shouldNotReturnProduct() {
+
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> productService.getProduct(1L))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessage("Product not found: 1");
     }
 
     @Test
-    void getProduct() {
-    }
+    public void shouldReturnProduct() {
+        Product product = new Product(1L, "Laptop", BigDecimal.valueOf(1200));
 
-    @Test
-    void updateProduct() {
-    }
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
-    @Test
-    void deleteProduct() {
-    }*/
+        ProductResponse result = productService.getProduct(1L);
+
+        assertThat(result.name()).isEqualTo(product.getName());
+        assertThat(result.price()).isEqualTo(product.getPrice());
+    }
 }

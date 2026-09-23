@@ -3,8 +3,11 @@ package com.example.spring_conc.service;
 import com.example.spring_conc.dto.requests.ProductRequest;
 import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
+import com.example.spring_conc.exception.ProductNotFoundException;
+import com.example.spring_conc.mapper.ProductMapper;
 import com.example.spring_conc.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,20 +22,16 @@ public class ProductService {
 
     public ProductResponse createProduct(ProductRequest request) {
 
-        Product product = new Product();
-        product.setName(request.name());
-        product.setPrice(request.price());
+        Product savedProduct = productRepository.save(ProductMapper.toEntity(request));
 
-        Product savedProduct = productRepository.save(product);
-
-        return toResponse(savedProduct);
+        return ProductMapper.toResponse(savedProduct);
     }
 
     public List<ProductResponse> getAllProducts() {
 
         return productRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .map(ProductMapper::toResponse)
                 .toList();
     }
 
@@ -40,42 +39,32 @@ public class ProductService {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Product not found: " + id));
+                        new ProductNotFoundException("Product not found: " + id));
 
-        return toResponse(product);
+        return ProductMapper.toResponse(product);
     }
 
+    @Transactional
     public ProductResponse updateProduct(
             Long id,
             ProductRequest request) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Product not found: " + id));
+                        new ProductNotFoundException("Product not found: " + id));
 
         product.setName(request.name());
         product.setPrice(request.price());
 
-        Product updatedProduct = productRepository.save(product);
-
-        return toResponse(updatedProduct);
+        return ProductMapper.toResponse(product);
     }
 
     public void deleteProduct(Long id) {
 
-        if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found: " + id);
-        }
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Product not found: " + id));
 
-        productRepository.deleteById(id);
-    }
-
-    private ProductResponse toResponse(Product product) {
-
-        return new ProductResponse(
-                product.getId(),
-                product.getName(),
-                product.getPrice()
-        );
+        productRepository.delete(product);
     }
 }
