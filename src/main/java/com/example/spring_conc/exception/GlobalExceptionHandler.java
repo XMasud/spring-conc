@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleUnexpectedException(Exception ex, HttpServletRequest request){
 
         logger.log(Level.WARNING, "Unexpected error while processing request: "+ ex);
-        
+
         return buildProblemDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred",

@@ -26,7 +26,7 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(ProductMapper.toEntity(request));
 
-        return toResponse(savedProduct);
+        return ProductMapper.toResponse(savedProduct);
     }
 
     public List<ProductResponse> getAllProducts() {
