@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.spring_conc.mapper.ProductMapper.toResponse;
-
 @Service
 public class ProductService {
 
@@ -40,7 +38,8 @@ public class ProductService {
     public ProductResponse getProduct(Long id) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ProductNotFoundException("Product not found: "+ id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Product not found: " + id));
 
         return ProductMapper.toResponse(product);
     }
@@ -51,13 +50,10 @@ public class ProductService {
             ProductRequest request) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ProductNotFoundException("Product not found: "+ id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Product not found: " + id));
 
-        product.setName(request.name());
-        product.setPrice(request.price());
-        product.setQty(request.qty());
-
-        //Product updateProduct = productRepository.save(product);
+        product.updateProduct(request.name(), request.price(), request.quantity());
 
         return ProductMapper.toResponse(product);
     }
@@ -65,9 +61,9 @@ public class ProductService {
     public void deleteProduct(Long id) {
 
         Product product = productRepository.findById(id)
-                        .orElseThrow(()-> new ProductNotFoundException("Product not found: "+ id));
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Product not found: " + id));
 
-        productRepository.deleteById(id);
+        productRepository.delete(product);
     }
-
 }

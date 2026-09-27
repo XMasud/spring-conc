@@ -31,8 +31,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Test
-    @DisplayName("Should create product")
-    void shouldCreateProduct() {
+    void createProduct() {
 
         ProductRequest request =
                 new ProductRequest(
@@ -41,13 +40,11 @@ class ProductServiceTest {
                         10
                 );
 
-        Product savedProduct =
-                new Product(
-                        1L,
-                        "Laptop",
-                        new BigDecimal("1200"),
-                        10
-                );
+        Product savedProduct = Product.builder()
+                .name(request.name())
+                .price(request.price())
+                .quantity(request.quantity())
+                .build();
 
         when(productRepository.save(any(Product.class)))
                 .thenReturn(savedProduct);
@@ -61,7 +58,7 @@ class ProductServiceTest {
                 result.price()
         );
 
-        verify(productRepository, times(1))
+        verify(productRepository)
                 .save(any(Product.class));
     }
 
@@ -147,6 +144,13 @@ class ProductServiceTest {
     void shouldDeleteProduct() {
 
         Product product = new Product(1L, "Laptop", BigDecimal.valueOf(500),10);
+    public void shouldReturnProduct() {
+        Product product = Product.builder()
+                .id(1L)
+                .name("Laptop")
+                .price(BigDecimal.valueOf(1200))
+                .quantity(1)
+                .build();
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 

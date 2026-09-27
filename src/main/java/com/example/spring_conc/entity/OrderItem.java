@@ -5,44 +5,41 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "order_items")
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private BigDecimal price;
-
-    @Column(nullable = false)
-    @ColumnDefault("0")
     private Integer quantity;
 
-    @Column(nullable = false)
-    @ColumnDefault("true")
-    private Boolean isAvailable;
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @Column(nullable = false)
     @CreatedDate
@@ -50,10 +47,4 @@ public class Product {
 
     @LastModifiedDate
     private Instant updatedAt;
-
-    public void updateProduct(String name, BigDecimal price, Integer quantity) {
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
-    }
 }
