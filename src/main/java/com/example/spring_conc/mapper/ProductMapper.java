@@ -4,8 +4,6 @@ import com.example.spring_conc.dto.requests.ProductRequest;
 import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
 
-import java.math.BigDecimal;
-
 public class ProductMapper {
 
     public static Product toEntity(ProductRequest request) {

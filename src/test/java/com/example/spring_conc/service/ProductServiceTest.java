@@ -5,7 +5,6 @@ import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
 import com.example.spring_conc.exception.ProductNotFoundException;
 import com.example.spring_conc.repository.ProductRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
