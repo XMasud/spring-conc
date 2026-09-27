@@ -10,6 +10,7 @@ public class ProductMapper {
         Product product = new Product();
         product.setName(request.name());
         product.setPrice(request.price());
+        product.setQuantity(request.quantity());
         return product;
     }
 
@@ -17,7 +18,8 @@ public class ProductMapper {
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
-                product.getPrice()
+                product.getPrice(),
+                product.getQuantity()
         );
     }
 }

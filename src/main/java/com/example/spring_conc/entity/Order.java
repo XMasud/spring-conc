@@ -1,10 +1,16 @@
 package com.example.spring_conc.entity;
 
+import com.example.spring_conc.entity.enums.OrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,33 +23,31 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "orders")
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private BigDecimal price;
-
-    @Column(nullable = false)
     @ColumnDefault("0")
-    private Integer quantity;
+    private BigDecimal totalAmount;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
-    private Boolean isAvailable;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status = OrderStatus.PENDING;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(nullable = false)
     @CreatedDate
@@ -51,6 +55,4 @@ public class Product {
 
     @LastModifiedDate
     private Instant updatedAt;
-
-
 }

@@ -36,15 +36,15 @@ class ProductServiceTest {
         ProductRequest request =
                 new ProductRequest(
                         "Laptop",
-                        new BigDecimal("1200")
+                        new BigDecimal("1200"),
+                        10
                 );
 
-        Product savedProduct =
-                new Product(
-                        1L,
-                        "Laptop",
-                        new BigDecimal("1200")
-                );
+        Product savedProduct = Product.builder()
+                .name(request.name())
+                .price(request.price())
+                .quantity(request.quantity())
+                .build();
 
         when(productRepository.save(any(Product.class)))
                 .thenReturn(savedProduct);
@@ -74,7 +74,12 @@ class ProductServiceTest {
 
     @Test
     public void shouldReturnProduct() {
-        Product product = new Product(1L, "Laptop", BigDecimal.valueOf(1200));
+        Product product = Product.builder()
+                .id(1L)
+                .name("Laptop")
+                .price(BigDecimal.valueOf(1200))
+                .quantity(1)
+                .build();
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
