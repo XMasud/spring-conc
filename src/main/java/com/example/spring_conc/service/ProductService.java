@@ -53,9 +53,7 @@ public class ProductService {
                 .orElseThrow(() ->
                         new ProductNotFoundException("Product not found: " + id));
 
-        product.setName(request.name());
-        product.setPrice(request.price());
-        product.setQuantity(request.quantity());
+        product.updateProduct(request.name(), request.price(), request.quantity());
 
         return ProductMapper.toResponse(product);
     }

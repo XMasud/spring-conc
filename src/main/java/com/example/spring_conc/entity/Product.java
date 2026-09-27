@@ -23,7 +23,6 @@ import java.util.List;
 @Table(name = "products")
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
@@ -52,5 +51,9 @@ public class Product {
     @LastModifiedDate
     private Instant updatedAt;
 
-
+    public void updateProduct(String name, BigDecimal price, Integer quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
 }
