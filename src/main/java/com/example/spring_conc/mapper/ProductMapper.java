@@ -4,14 +4,17 @@ import com.example.spring_conc.dto.requests.ProductRequest;
 import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
 
+import java.math.BigDecimal;
+
 public class ProductMapper {
 
     public static Product toEntity(ProductRequest request) {
-        Product product = new Product();
-        product.setName(request.name());
-        product.setPrice(request.price());
-        product.setQuantity(request.quantity());
-        return product;
+
+        return Product.builder()
+                .name(request.name())
+                .price(request.price())
+                .quantity(request.quantity())
+                .build();
     }
 
     public static ProductResponse toResponse(Product product) {

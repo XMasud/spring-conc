@@ -65,17 +65,22 @@ class ProductServiceTest {
     @Test
     void shouldReturnProduct() {
 
-        Product product = new Product(1L, "Laptop", BigDecimal.valueOf(1500),10);
+        Product product = Product.builder()
+                .id(1L)
+                .name("Laptop")
+                .price(BigDecimal.valueOf(1200))
+                .quantity(1)
+                .build();
 
         when(productRepository.findById(1L)).
                 thenReturn(Optional.of(product));
 
-        ProductResponse productResponse = productService.getProduct(1L);
+        ProductResponse productResponse = productService.getProduct(product.getId());
 
         assertThat(productResponse.id()).isEqualTo(product.getId());
         assertThat(productResponse.name()).isEqualTo(product.getName());
         assertThat(productResponse.price()).isEqualTo(product.getPrice());
-        assertThat(productResponse.qty()).isEqualTo(product.getQty());
+        assertThat(productResponse.quantity()).isEqualTo(product.getQuantity());
     }
 
     @Test
@@ -94,18 +99,18 @@ class ProductServiceTest {
 
         long productId = 1L;
 
-        Product product = new Product(
-                productId,
-                "Samsung Tab",
-                BigDecimal.valueOf(800),
-                10
-        );
+
+        Product product = Product.builder()
+                .name("Laptop")
+                .price(BigDecimal.valueOf(1000))
+                .quantity(10)
+                .build();
 
         when(productRepository.findById(productId))
                 .thenReturn(Optional.of(product));
 
         ProductRequest updateRequest = new ProductRequest(
-                "Samsung Tab",
+                "Laptop",
                 BigDecimal.valueOf(1000),
                 10
         );
@@ -143,8 +148,7 @@ class ProductServiceTest {
     @Test
     void shouldDeleteProduct() {
 
-        Product product = new Product(1L, "Laptop", BigDecimal.valueOf(500),10);
-    public void shouldReturnProduct() {
+
         Product product = Product.builder()
                 .id(1L)
                 .name("Laptop")
@@ -157,11 +161,11 @@ class ProductServiceTest {
         productService.deleteProduct(1L);
 
         verify(productRepository, times(1)).findById(1L);
-        verify(productRepository, times(1)).deleteById(1L);
+        verify(productRepository, times(1)).delete(product);
     }
 
     @Test
-    void shouldDeleteProductNotFound() {
+    void shouldNotDeleteProductNotExist() {
 
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -169,6 +173,7 @@ class ProductServiceTest {
                 isInstanceOf(ProductNotFoundException.class).
                 hasMessage("Product not found: 1");
 
+        verify(productRepository, times(1)).findById(1L);
         verify(productRepository, never()).delete(any(Product.class));
     }
 }
