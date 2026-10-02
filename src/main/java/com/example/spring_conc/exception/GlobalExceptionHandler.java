@@ -15,8 +15,8 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = Logger.getLogger(GlobalExceptionHandler.class.getName());
 
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ProblemDetail handleProductNotFoundException(ProductNotFoundException ex, HttpServletRequest request) {
+    @ExceptionHandler(NotFoundException.class)
+    public ProblemDetail handleProductNotFoundException(NotFoundException ex, HttpServletRequest request) {
 
         return buildProblemDetail(
                 HttpStatus.NOT_FOUND,
