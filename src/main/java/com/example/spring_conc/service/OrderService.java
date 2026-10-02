@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         for (var orderItem : orderRequest.orderItems()) {
-            orderItemService.createOrderItems(orderItem.quantity(), savedOrder, products.get(orderItem.productId()));
+            orderItemService.createOrderItem(orderItem.quantity(), savedOrder, products.get(orderItem.productId()));
         }
 
         return savedOrder;

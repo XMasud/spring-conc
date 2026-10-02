@@ -122,7 +122,7 @@ public class OrderServiceTest {
         when(productService.getProduct(2L)).thenReturn(product2);
 
         when(orderRepository.save(any(Order.class))).thenReturn(order);
-        doNothing().when(orderItemService).createOrderItems(any(), any(), any());
+        doNothing().when(orderItemService).createOrderItem(any(), any(), any());
 
 
         // act
@@ -134,6 +134,5 @@ public class OrderServiceTest {
         assertEquals(OrderStatus.PENDING, savedOrder.getStatus());
         verify(orderRepository).save(any(Order.class));
     }
-
 
 }
