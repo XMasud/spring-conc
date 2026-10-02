@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -111,11 +112,17 @@ public class OrderServiceTest {
                 .price(BigDecimal.valueOf(5))
                 .build();
 
+        Order order = Order.builder()
+                .id(1L)
+                .totalAmount(BigDecimal.valueOf(35))
+                .status(OrderStatus.PENDING)
+                .build();
 
         when(productService.getProduct(1L)).thenReturn(product1);
         when(productService.getProduct(2L)).thenReturn(product2);
 
-        //doNothing().when(orderItemService).createOrderItems(any(), any(), any());
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+        doNothing().when(orderItemService).createOrderItems(any(), any(), any());
 
 
         // act
@@ -127,4 +134,6 @@ public class OrderServiceTest {
         assertEquals(OrderStatus.PENDING, savedOrder.getStatus());
         verify(orderRepository).save(any(Order.class));
     }
+
+
 }

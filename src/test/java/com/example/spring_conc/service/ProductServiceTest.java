@@ -74,12 +74,12 @@ class ProductServiceTest {
         when(productRepository.findById(1L)).
                 thenReturn(Optional.of(product));
 
-        ProductResponse productResponse = productService.getProduct(product.getId());
+        Product savedProduct = productService.getProduct(product.getId());
 
-        assertThat(productResponse.id()).isEqualTo(product.getId());
-        assertThat(productResponse.name()).isEqualTo(product.getName());
-        assertThat(productResponse.price()).isEqualTo(product.getPrice());
-        assertThat(productResponse.quantity()).isEqualTo(product.getQuantity());
+        assertThat(savedProduct.getId()).isEqualTo(product.getId());
+        assertThat(savedProduct.getName()).isEqualTo(product.getName());
+        assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice());
+        assertThat(savedProduct.getQuantity()).isEqualTo(product.getQuantity());
     }
 
     @Test
