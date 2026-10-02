@@ -46,9 +46,6 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    List<OrderItem> orderItems = new ArrayList<>();
-
     @Column(nullable = false)
     @CreatedDate
     private Instant createdAt;

@@ -3,7 +3,7 @@ package com.example.spring_conc.service;
 import com.example.spring_conc.dto.requests.ProductRequest;
 import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
-import com.example.spring_conc.exception.ProductNotFoundException;
+import com.example.spring_conc.exception.NotFoundException;
 import com.example.spring_conc.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,12 +74,12 @@ class ProductServiceTest {
         when(productRepository.findById(1L)).
                 thenReturn(Optional.of(product));
 
-        ProductResponse productResponse = productService.getProduct(product.getId());
+        Product savedProduct = productService.getProduct(product.getId());
 
-        assertThat(productResponse.id()).isEqualTo(product.getId());
-        assertThat(productResponse.name()).isEqualTo(product.getName());
-        assertThat(productResponse.price()).isEqualTo(product.getPrice());
-        assertThat(productResponse.quantity()).isEqualTo(product.getQuantity());
+        assertThat(savedProduct.getId()).isEqualTo(product.getId());
+        assertThat(savedProduct.getName()).isEqualTo(product.getName());
+        assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice());
+        assertThat(savedProduct.getQuantity()).isEqualTo(product.getQuantity());
     }
 
     @Test
@@ -88,7 +88,7 @@ class ProductServiceTest {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.getProduct(1L))
-                .isInstanceOf(ProductNotFoundException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessage("Product not found: 1");
     }
 
@@ -139,7 +139,7 @@ class ProductServiceTest {
 
         assertThatThrownBy(()-> productService.updateProduct(productId, updateRequest))
                 .hasMessage("Product not found: 1")
-                .isInstanceOf(ProductNotFoundException.class);
+                .isInstanceOf(NotFoundException.class);
 
     }
 
@@ -169,7 +169,7 @@ class ProductServiceTest {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.getProduct(1L)).
-                isInstanceOf(ProductNotFoundException.class).
+                isInstanceOf(NotFoundException.class).
                 hasMessage("Product not found: 1");
 
         verify(productRepository, times(1)).findById(1L);
