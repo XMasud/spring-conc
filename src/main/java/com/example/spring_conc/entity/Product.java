@@ -10,17 +10,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 @Builder
 @Getter
 @NoArgsConstructor

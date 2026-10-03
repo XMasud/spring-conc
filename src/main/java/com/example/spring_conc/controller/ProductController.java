@@ -1,13 +1,22 @@
 package com.example.spring_conc.controller;
 
 import com.example.spring_conc.dto.requests.ProductRequest;
-import com.example.spring_conc.dto.responses.APIResponse;
+import com.example.spring_conc.dto.responses.ApiResponse;
 import com.example.spring_conc.dto.responses.ProductResponse;
 import com.example.spring_conc.entity.Product;
+import com.example.spring_conc.mapper.ProductMapper;
 import com.example.spring_conc.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -23,12 +32,12 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public APIResponse<ProductResponse> createProduct(
+    public ApiResponse<ProductResponse> createProduct(
             @Valid @RequestBody ProductRequest request) {
 
         ProductResponse product = productService.createProduct(request);
 
-        return new APIResponse<>(
+        return new ApiResponse<>(
                 true,
                 "Product created successfully",
                 product
@@ -36,11 +45,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public APIResponse<List<ProductResponse>> getAllProducts() {
+    public ApiResponse<List<ProductResponse>> getAllProducts() {
 
         List<ProductResponse> products = productService.getAllProducts();
 
-        return new APIResponse<>(
+        return new ApiResponse<>(
                 true,
                 "Products retrieved successfully",
                 products
@@ -48,27 +57,27 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public APIResponse<ProductResponse> getProduct(
+    public ApiResponse<ProductResponse> getProduct(
             @PathVariable Long id) {
 
-        ProductResponse product = productService.getProduct(id);
+        Product product = productService.getProduct(id);
 
-        return new APIResponse<>(
+        return new ApiResponse<>(
                 true,
                 "Product retrieved successfully",
-                product
+                ProductMapper.toResponse(product)
         );
     }
 
     @PutMapping("/{id}")
-    public APIResponse<ProductResponse> updateProduct(
+    public ApiResponse<ProductResponse> updateProduct(
             @PathVariable Long id,
             @Valid @RequestBody ProductRequest request) {
 
         ProductResponse product =
                 productService.updateProduct(id, request);
 
-        return new APIResponse<>(
+        return new ApiResponse<>(
                 true,
                 "Product updated successfully",
                 product

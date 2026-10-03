@@ -22,7 +22,6 @@ import java.time.Instant;
 @Table(name = "order_items")
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
