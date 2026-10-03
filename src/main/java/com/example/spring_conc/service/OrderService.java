@@ -1,8 +1,11 @@
 package com.example.spring_conc.service;
 
+import com.example.spring_conc.dto.requests.OrderItemRequest;
 import com.example.spring_conc.dto.requests.OrderRequest;
 import com.example.spring_conc.entity.Order;
+import com.example.spring_conc.entity.OrderItem;
 import com.example.spring_conc.entity.Product;
+import com.example.spring_conc.entity.enums.OrderStatus;
 import com.example.spring_conc.exception.NotFoundException;
 import com.example.spring_conc.repository.OrderRepository;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.Map;
 
 @Service
 public class OrderService {
+
     private final OrderRepository orderRepository;
     private final ProductService productService;
     private final OrderItemService orderItemService;
@@ -36,8 +40,10 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(OrderRequest orderRequest) {
+
         BigDecimal totalAmount = BigDecimal.ZERO;
         Map<Long, Product> products = new HashMap<>();
+
 
         for (var orderItem : orderRequest.orderItems()) {
             Product product = productService.getProduct(orderItem.productId());

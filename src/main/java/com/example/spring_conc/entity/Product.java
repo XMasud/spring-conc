@@ -11,11 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Entity
 @Table(name = "product")
@@ -23,7 +20,7 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,15 +36,8 @@ public class Product {
     private Integer quantity;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
-    private Boolean isAvailable;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private Instant createdAt;
-
-    @LastModifiedDate
-    private Instant updatedAt;
+    @Builder.Default
+    private Boolean isAvailable = true;
 
     public void updateProduct(String name, BigDecimal price, Integer quantity) {
         this.name = name;
