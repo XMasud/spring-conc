@@ -6,6 +6,7 @@ import com.example.spring_conc.entity.Order;
 import com.example.spring_conc.entity.Product;
 import com.example.spring_conc.entity.enums.OrderStatus;
 import com.example.spring_conc.exception.NotFoundException;
+import com.example.spring_conc.repository.OrderItemRepository;
 import com.example.spring_conc.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ import static org.mockito.Mockito.when;
 public class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private OrderItemRepository orderItemRepository;
 
     @Mock
     private ProductService productService;
@@ -122,7 +126,7 @@ public class OrderServiceTest {
         when(productService.getProduct(2L)).thenReturn(product2);
 
         when(orderRepository.save(any(Order.class))).thenReturn(order);
-        doNothing().when(orderItemService).createOrderItem(any(), any(), any());
+        //doNothing().when(orderItemService).createOrderItem(any(), any(), any());
 
 
         // act

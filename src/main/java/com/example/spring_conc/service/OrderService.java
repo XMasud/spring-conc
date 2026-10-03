@@ -7,6 +7,7 @@ import com.example.spring_conc.entity.OrderItem;
 import com.example.spring_conc.entity.Product;
 import com.example.spring_conc.entity.enums.OrderStatus;
 import com.example.spring_conc.exception.NotFoundException;
+import com.example.spring_conc.repository.OrderItemRepository;
 import com.example.spring_conc.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +22,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductService productService;
-    private final OrderItemService orderItemService;
+    private final OrderItemRepository orderItemRepository;
 
-    public OrderService(OrderRepository orderRepository, ProductService productService, OrderItemService orderItemService) {
+    public OrderService(OrderRepository orderRepository, ProductService productService, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.productService = productService;
-        this.orderItemService = orderItemService;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Transactional(readOnly = true)
@@ -41,24 +42,27 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderRequest orderRequest) {
 
+        Order order = new Order();
+        order.setTotalAmount(BigDecimal.ZERO);
+
         BigDecimal totalAmount = BigDecimal.ZERO;
-        Map<Long, Product> products = new HashMap<>();
 
+        for (OrderItemRequest orderItem : orderRequest.orderItems()) {
 
-        for (var orderItem : orderRequest.orderItems()) {
             Product product = productService.getProduct(orderItem.productId());
             totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(orderItem.quantity())));
-            products.put(product.getId(), product);
+
+            OrderItem item = OrderItem.builder()
+                    .quantity(orderItem.quantity())
+                    .order(order)
+                    .product(product)
+                    .build();
+
+            orderItemRepository.save(item);
         }
 
-        Order order = new Order();
         order.setTotalAmount(totalAmount);
-        Order savedOrder = orderRepository.save(order);
 
-        for (var orderItem : orderRequest.orderItems()) {
-            orderItemService.createOrderItem(orderItem.quantity(), savedOrder, products.get(orderItem.productId()));
-        }
-
-        return savedOrder;
+        return orderRepository.save(order);
     }
 }

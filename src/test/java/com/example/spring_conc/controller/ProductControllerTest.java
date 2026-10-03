@@ -16,7 +16,6 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,6 +40,7 @@ class ProductControllerTest {
 
     @BeforeEach
     void setUp() {
+
         request = new ProductRequest(
                 "Product-1",
                 BigDecimal.valueOf(100),
@@ -102,6 +102,20 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(productService).getProduct(1L);
+    }
+
+    @Test
+    void shouldUpdateProduct() throws Exception {
+
+        when(productService.updateProduct(1L, request)).thenReturn(response);
+
+        mockMvc.perform(put("/api/products/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(request.name()))
+                .andExpect(jsonPath("$.price").value(request.price()))
+                .andExpect(jsonPath("$.quantity").value(request.quantity()));
+
+        verify(productService).updateProduct(1L, request);
     }
 
     @Test
