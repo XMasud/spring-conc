@@ -63,7 +63,28 @@ class ProductServiceTest {
     }
 
     @Test
-    public void shouldNotReturnProduct() {
+    void shouldReturnProduct() {
+
+        Product product = Product.builder()
+                .id(1L)
+                .name("Laptop")
+                .price(BigDecimal.valueOf(1200))
+                .quantity(1)
+                .build();
+
+        when(productRepository.findById(1L)).
+                thenReturn(Optional.of(product));
+
+        ProductResponse productResponse = productService.getProduct(product.getId());
+
+        assertThat(productResponse.id()).isEqualTo(product.getId());
+        assertThat(productResponse.name()).isEqualTo(product.getName());
+        assertThat(productResponse.price()).isEqualTo(product.getPrice());
+        assertThat(productResponse.quantity()).isEqualTo(product.getQuantity());
+    }
+
+    @Test
+    void shouldNotReturnProduct() {
 
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -72,20 +93,5 @@ class ProductServiceTest {
                 .hasMessage("Product not found: 1");
     }
 
-    @Test
-    public void shouldReturnProduct() {
-        Product product = Product.builder()
-                .id(1L)
-                .name("Laptop")
-                .price(BigDecimal.valueOf(1200))
-                .quantity(1)
-                .build();
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-
-        ProductResponse result = productService.getProduct(1L);
-
-        assertThat(result.name()).isEqualTo(product.getName());
-        assertThat(result.price()).isEqualTo(product.getPrice());
-    }
 }
