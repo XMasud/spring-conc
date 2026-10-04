@@ -44,6 +44,7 @@ public class OrderService {
 
         Order order = new Order();
         order.setTotalAmount(BigDecimal.ZERO);
+        order = orderRepository.save(order);
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
