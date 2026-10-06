@@ -6,6 +6,7 @@ import com.example.spring_conc.entity.Order;
 import com.example.spring_conc.entity.OrderItem;
 import com.example.spring_conc.entity.Product;
 import com.example.spring_conc.entity.enums.OrderStatus;
+import com.example.spring_conc.exception.InvalidStatusException;
 import com.example.spring_conc.exception.NotFoundException;
 import com.example.spring_conc.repository.OrderItemRepository;
 import com.example.spring_conc.repository.OrderRepository;
@@ -63,6 +64,19 @@ public class OrderService {
         }
 
         order.setTotalAmount(totalAmount);
+
+        return orderRepository.save(order);
+    }
+
+    @Transactional
+    public Order changeOrderStatus(Long orderId, OrderStatus status) {
+        Order order = getOrderById(orderId);
+
+        if (!order.getStatus().isValidStatus(status)) {
+            throw new InvalidStatusException("Invalid status transition");
+        }
+
+        order.setStatus(status);
 
         return orderRepository.save(order);
     }

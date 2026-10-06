@@ -37,6 +37,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidStatusException.class)
+    public ProblemDetail handleInvalidStatusException(InvalidStatusException ex, HttpServletRequest request){
+
+        return buildProblemDetail(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request
+        );
+    }
+
     private ProblemDetail buildProblemDetail(HttpStatus httpStatus, String details, HttpServletRequest request) {
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(httpStatus, details);

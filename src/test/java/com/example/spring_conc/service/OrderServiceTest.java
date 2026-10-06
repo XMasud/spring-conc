@@ -5,6 +5,7 @@ import com.example.spring_conc.dto.requests.OrderRequest;
 import com.example.spring_conc.entity.Order;
 import com.example.spring_conc.entity.Product;
 import com.example.spring_conc.entity.enums.OrderStatus;
+import com.example.spring_conc.exception.InvalidStatusException;
 import com.example.spring_conc.exception.NotFoundException;
 import com.example.spring_conc.repository.OrderItemRepository;
 import com.example.spring_conc.repository.OrderRepository;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -136,7 +138,44 @@ public class OrderServiceTest {
         assertNotNull(savedOrder);
         assertEquals(BigDecimal.valueOf(35), savedOrder.getTotalAmount());
         assertEquals(OrderStatus.PENDING, savedOrder.getStatus());
+        verify(orderRepository, times(2)).save(any(Order.class));
+    }
+
+    @Test
+    void shouldChangeOrderStatus() {
+        // arrange
+        Long id = 1L;
+
+        Order orderResponse = Order.builder()
+                .id(id)
+                .status(OrderStatus.PENDING)
+                .build();
+
+        when(orderRepository.findById(id)).thenReturn(Optional.of(orderResponse));
+        when(orderRepository.save(any(Order.class))).thenReturn(orderResponse);
+
+        // act
+        Order updatedOrder = underTest.changeOrderStatus(id, OrderStatus.PROCESSING);
+
+        // assert
+        assertEquals(OrderStatus.PROCESSING, updatedOrder.getStatus());
         verify(orderRepository).save(any(Order.class));
+    }
+
+    @Test
+    void shouldNotChangeStatusWhenStatusIsInvalid() {
+        // arrange
+        Long id = 1L;
+
+        Order orderResponse = Order.builder()
+                .id(id)
+                .status(OrderStatus.PENDING)
+                .build();
+
+        when(orderRepository.findById(id)).thenReturn(Optional.of(orderResponse));
+
+        // act & assert
+        assertThrows(InvalidStatusException.class, () -> underTest.changeOrderStatus(id, OrderStatus.DELIVERED));
     }
 
 }
