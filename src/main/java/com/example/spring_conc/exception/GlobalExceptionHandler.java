@@ -1,8 +1,10 @@
 package com.example.spring_conc.exception;
 
+import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,9 +28,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ProblemDetail handleUnexpectedException(Exception ex, HttpServletRequest request){
+    public ProblemDetail handleUnexpectedException(Exception ex, HttpServletRequest request) {
 
-        logger.log(Level.WARNING, "Unexpected error while processing request: "+ ex);
+        logger.log(Level.WARNING, "Unexpected error while processing request: " + ex);
 
         return buildProblemDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -38,11 +40,38 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidStatusException.class)
-    public ProblemDetail handleInvalidStatusException(InvalidStatusException ex, HttpServletRequest request){
+    public ProblemDetail handleInvalidStatusException(InvalidStatusException ex, HttpServletRequest request) {
 
         return buildProblemDetail(
                 HttpStatus.BAD_REQUEST,
                 ex.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(OutOfStockException.class)
+    public ProblemDetail handleOutOfStockException(
+            OutOfStockException exception,
+            HttpServletRequest request) {
+
+        return buildProblemDetail(
+                HttpStatus.CONFLICT,
+                "Insufficient stock.",
+                request
+        );
+    }
+
+    @ExceptionHandler({
+            OptimisticLockException.class,
+            ObjectOptimisticLockingFailureException.class
+    })
+    public ProblemDetail handleOptimisticLockException(
+            Exception exception,
+            HttpServletRequest request) {
+
+        return buildProblemDetail(
+                HttpStatus.CONFLICT,
+                "The product is being updated by another transaction. Please try again.",
                 request
         );
     }

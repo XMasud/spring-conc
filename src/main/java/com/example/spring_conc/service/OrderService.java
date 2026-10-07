@@ -52,6 +52,9 @@ public class OrderService {
         for (OrderItemRequest orderItem : orderRequest.orderItems()) {
 
             Product product = productService.getProduct(orderItem.productId());
+
+            product.decreaseQuantity(orderItem.quantity());
+
             totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(orderItem.quantity())));
 
             OrderItem item = OrderItem.builder()

@@ -7,6 +7,7 @@ import com.example.spring_conc.entity.Product;
 import com.example.spring_conc.entity.enums.OrderStatus;
 import com.example.spring_conc.exception.InvalidStatusException;
 import com.example.spring_conc.exception.NotFoundException;
+import com.example.spring_conc.exception.OutOfStockException;
 import com.example.spring_conc.repository.OrderItemRepository;
 import com.example.spring_conc.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
@@ -176,6 +177,47 @@ public class OrderServiceTest {
 
         // act & assert
         assertThrows(InvalidStatusException.class, () -> underTest.changeOrderStatus(id, OrderStatus.DELIVERED));
+    }
+
+    @Test
+    void shouldOrderFailedDueToInsufficientStock(){
+
+        //Arrange
+        OrderRequest orderRequest = new OrderRequest(
+                List.of(
+                        new OrderItemRequest(1L, 2),
+                        new OrderItemRequest(2L, 3)
+                )
+        );
+
+        Product product1 = Product.builder()
+                .id(1L)
+                .price(BigDecimal.valueOf(10))
+                .quantity(2)
+                .build();
+
+        Product product2 = Product.builder()
+                .id(2L)
+                .price(BigDecimal.valueOf(5))
+                .quantity(1)
+                .build();
+
+        Order order = Order.builder()
+                .id(1L)
+                .totalAmount(BigDecimal.valueOf(35))
+                .status(OrderStatus.PENDING)
+                .build();
+
+        when(productService.getProduct(1L)).thenReturn(product1);
+        when(productService.getProduct(2L)).thenReturn(product2);
+
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+
+        // Act & Assert
+        assertThrows(OutOfStockException.class, () -> underTest.createOrder(orderRequest));
+
+        verify(productService).getProduct(1L);
+        verify(productService).getProduct(2L);
     }
 
 }
